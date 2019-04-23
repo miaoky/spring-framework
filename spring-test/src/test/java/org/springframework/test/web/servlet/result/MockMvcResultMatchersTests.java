@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -38,7 +38,7 @@ public class MockMvcResultMatchersTests {
 
 	@Test
 	public void redirectWithUrlTemplate() throws Exception {
-		redirectedUrl("/orders/{orderId}/items/{itemId}", 1, 2).match(getRedirectedUrlStubMvcResult("/orders/1/items/2"));
+		redirectedUrlTemplate("/orders/{orderId}/items/{itemId}", 1, 2).match(getRedirectedUrlStubMvcResult("/orders/1/items/2"));
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class MockMvcResultMatchersTests {
 
 	@Test
 	public void forwardWithUrlTemplate() throws Exception {
-		forwardedUrl("/orders/{orderId}/items/{itemId}", 1, 2).match(getForwardedUrlStubMvcResult("/orders/1/items/2"));
+		forwardedUrlTemplate("/orders/{orderId}/items/{itemId}", 1, 2).match(getForwardedUrlStubMvcResult("/orders/1/items/2"));
 	}
 
 	@Test

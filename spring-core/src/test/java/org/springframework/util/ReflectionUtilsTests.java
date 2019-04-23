@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2002-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -86,7 +86,7 @@ public class ReflectionUtilsTests {
 		TestObject bean = new TestObject();
 		bean.setName(rob);
 
-		Method getName = TestObject.class.getMethod("getName", (Class[]) null);
+		Method getName = TestObject.class.getMethod("getName");
 		Method setName = TestObject.class.getMethod("setName", String.class);
 
 		Object name = ReflectionUtils.invokeMethod(getName, bean);
@@ -302,13 +302,13 @@ public class ReflectionUtilsTests {
 		class Parent {
 			@SuppressWarnings("unused")
 			public Number m1() {
-				return new Integer(42);
+				return Integer.valueOf(42);
 			}
 		}
 		class Leaf extends Parent {
 			@Override
 			public Integer m1() {
-				return new Integer(42);
+				return Integer.valueOf(42);
 			}
 		}
 		int m1MethodCount = 0;
@@ -358,6 +358,13 @@ public class ReflectionUtilsTests {
 		long totalMs = sw.getTotalTimeMillis();
 		assertThat(methods.length, Matchers.greaterThan(100));
 		assertThat(totalMs, Matchers.lessThan(10L));
+	}
+
+	@Test
+	public void getDecalredMethodsReturnsCopy() {
+		Method[] m1 = ReflectionUtils.getDeclaredMethods(A.class);
+		Method[] m2 = ReflectionUtils.getDeclaredMethods(A.class);
+		assertThat(m1, not(sameInstance(m2)));
 	}
 
 	private static class ListSavingMethodCallback implements ReflectionUtils.MethodCallback {

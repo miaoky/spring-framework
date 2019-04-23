@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2002-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,7 @@ import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.aop.framework.Advised;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.lang.Nullable;
 import org.springframework.tests.sample.beans.ITestBean;
 
 import static org.junit.Assert.*;
@@ -54,7 +55,7 @@ public class BeanNamePointcutTests {
 
 
 	@Before
-	public void setUp() {
+	public void setup() {
 		ctx = new ClassPathXmlApplicationContext(getClass().getSimpleName() + ".xml", getClass());
 		testBean1 = (ITestBean) ctx.getBean("testBean1");
 		testBean2 = (ITestBean) ctx.getBean("testBean2");
@@ -129,7 +130,7 @@ public class BeanNamePointcutTests {
 		private int interceptionCount;
 
 		@Override
-		public void before(Method method, Object[] args, Object target) throws Throwable {
+		public void before(Method method, Object[] args, @Nullable Object target) throws Throwable {
 			interceptionCount++;
 		}
 	}

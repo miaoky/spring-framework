@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -571,14 +571,14 @@ public class UriTemplateServletAnnotationControllerHandlerMethodTests extends Ab
 	@RequestMapping("/category")
 	public static class MultiPathController {
 
-		@RequestMapping(value = {"/{category}/page/{page}", "/**/{category}/page/{page}"})
+		@RequestMapping(value = {"/{category}/page/{page}", "/*/{category}/page/{page}"})
 		public void category(@PathVariable String category, @PathVariable int page, Writer writer) throws IOException {
 			writer.write("handle1-");
 			writer.write("category-" + category);
 			writer.write("page-" + page);
 		}
 
-		@RequestMapping(value = {"/{category}", "/**/{category}"})
+		@RequestMapping(value = {"/{category}", "/*/{category}"})
 		public void category(@PathVariable String category, Writer writer) throws IOException {
 			writer.write("handle2-");
 			writer.write("category-" + category);
@@ -598,7 +598,7 @@ public class UriTemplateServletAnnotationControllerHandlerMethodTests extends Ab
 	}
 
 	@Controller
-	@RequestMapping("/*/menu/**")
+	@RequestMapping("/*/menu/") // was /*/menu/**
 	public static class MenuTreeController {
 
 		@RequestMapping("type/{var}")

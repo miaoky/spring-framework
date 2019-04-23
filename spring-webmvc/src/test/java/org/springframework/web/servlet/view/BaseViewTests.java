@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2002-2018 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -270,7 +270,7 @@ public class BaseViewTests {
 	}
 
 	@Test
-	public void attributeCSVParsingIgoresTrailingComma() {
+	public void attributeCSVParsingIgnoresTrailingComma() {
 		AbstractView v = new ConcreteView();
 		v.setAttributesCSV("foo=[de],");
 		assertEquals(1, v.getStaticAttributes().size());
@@ -281,9 +281,8 @@ public class BaseViewTests {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void checkContainsAll(Map expected, Map<String, Object> actual) {
-		expected.keySet().stream().forEach(
-			key -> assertEquals("Values for model key '" + key + "' must match", expected.get(key), actual.get(key))
-		);
+		expected.forEach((k, v) -> assertEquals("Values for model key '" + k
+				+ "' must match", expected.get(k), actual.get(k)));
 	}
 
 
@@ -294,7 +293,9 @@ public class BaseViewTests {
 	private static class ConcreteView extends AbstractView {
 		// Do-nothing concrete subclass
 		@Override
-		protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response)
+		protected void renderMergedOutputModel(Map<String, Object> model,
+				HttpServletRequest request, HttpServletResponse response)
+
 			throws ServletException, IOException {
 			throw new UnsupportedOperationException();
 		}

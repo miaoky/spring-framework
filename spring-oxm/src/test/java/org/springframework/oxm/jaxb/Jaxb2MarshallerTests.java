@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2002-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -34,9 +34,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
-import org.xmlunit.diff.Comparison;
-import org.xmlunit.diff.ComparisonResult;
-import org.xmlunit.diff.ComparisonType;
 import org.xmlunit.diff.DifferenceEvaluator;
 
 import javax.activation.DataHandler;
@@ -55,9 +52,7 @@ import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -191,7 +186,7 @@ public class Jaxb2MarshallerTests extends AbstractMarshallerTests<Jaxb2Marshalle
 	@Test
 	public void supportsPackagesToScan() throws Exception {
 		marshaller = new Jaxb2Marshaller();
-		marshaller.setPackagesToScan(new String[] {CONTEXT_PATH});
+		marshaller.setPackagesToScan(CONTEXT_PATH);
 		marshaller.afterPropertiesSet();
 		testSupports();
 	}
@@ -208,7 +203,7 @@ public class Jaxb2MarshallerTests extends AbstractMarshallerTests<Jaxb2Marshalle
 				marshaller.supports(method.getGenericReturnType()));
 
 		marshaller.setSupportJaxbElementClass(true);
-		JAXBElement<FlightType> flightTypeJAXBElement = new JAXBElement<>(new QName("http://springframework.org", "flight"), FlightType.class,
+		JAXBElement<FlightType> flightTypeJAXBElement = new JAXBElement<>(new QName("https://springframework.org", "flight"), FlightType.class,
 				new FlightType());
 		assertTrue("Jaxb2Marshaller does not support JAXBElement<FlightsType>", marshaller.supports(flightTypeJAXBElement.getClass()));
 
@@ -311,11 +306,10 @@ public class Jaxb2MarshallerTests extends AbstractMarshallerTests<Jaxb2Marshalle
 		verify(mimeContainer, times(3)).addAttachment(isA(String.class), isA(DataHandler.class));
 	}
 
-	@Test
+	@Test  // SPR-10714
 	public void marshalAWrappedObjectHoldingAnXmlElementDeclElement() throws Exception {
-		// SPR-10714
 		marshaller = new Jaxb2Marshaller();
-		marshaller.setPackagesToScan(new String[]{"org.springframework.oxm.jaxb"});
+		marshaller.setPackagesToScan("org.springframework.oxm.jaxb");
 		marshaller.afterPropertiesSet();
 		Airplane airplane = new Airplane();
 		airplane.setName("test");
@@ -328,15 +322,12 @@ public class Jaxb2MarshallerTests extends AbstractMarshallerTests<Jaxb2Marshalle
 				isSimilarTo("<airplane><name>test</name></airplane>").withDifferenceEvaluator(ev));
 	}
 
-	// SPR-10806
-
-	@Test
+	@Test  // SPR-10806
 	public void unmarshalStreamSourceWithXmlOptions() throws Exception {
-
 		final javax.xml.bind.Unmarshaller unmarshaller = mock(javax.xml.bind.Unmarshaller.class);
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller() {
 			@Override
-			protected javax.xml.bind.Unmarshaller createUnmarshaller() {
+			public javax.xml.bind.Unmarshaller createUnmarshaller() {
 				return unmarshaller;
 			}
 		};
@@ -365,15 +356,12 @@ public class Jaxb2MarshallerTests extends AbstractMarshallerTests<Jaxb2Marshalle
 		assertEquals(true, result.getXMLReader().getFeature("http://xml.org/sax/features/external-general-entities"));
 	}
 
-	// SPR-10806
-
-	@Test
+	@Test  // SPR-10806
 	public void unmarshalSaxSourceWithXmlOptions() throws Exception {
-
 		final javax.xml.bind.Unmarshaller unmarshaller = mock(javax.xml.bind.Unmarshaller.class);
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller() {
 			@Override
-			protected javax.xml.bind.Unmarshaller createUnmarshaller() {
+			public javax.xml.bind.Unmarshaller createUnmarshaller() {
 				return unmarshaller;
 			}
 		};
@@ -426,4 +414,5 @@ public class Jaxb2MarshallerTests extends AbstractMarshallerTests<Jaxb2Marshalle
 	private JAXBElement<DummyType> createDummyType() {
 		return null;
 	}
+
 }

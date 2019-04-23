@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,6 +49,7 @@ import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.convert.support.GenericConversionService;
+import org.springframework.lang.Nullable;
 import org.springframework.tests.Assume;
 import org.springframework.tests.TestGroup;
 import org.springframework.tests.sample.beans.BooleanTestBean;
@@ -461,7 +462,7 @@ public abstract class AbstractPropertyAccessorTests {
 		AbstractPropertyAccessor accessor = createAccessor(target);
 		accessor.setConversionService(new GenericConversionService() {
 			@Override
-			public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
+			public Object convert(@Nullable Object source, @Nullable TypeDescriptor sourceType, TypeDescriptor targetType) {
 				throw new ConversionFailedException(sourceType, targetType, source, null);
 			}
 		});
@@ -1598,6 +1599,7 @@ public abstract class AbstractPropertyAccessorTests {
 		TestBean tb7 = ((TestBean) target.getSet().toArray()[1]);
 		TestBean tb4 = ((TestBean) target.getMap().get("key1"));
 		TestBean tb5 = ((TestBean) target.getMap().get("key.3"));
+		TestBean tb8 = ((TestBean) target.getMap().get("key5[foo]"));
 		assertEquals("name0", tb0.getName());
 		assertEquals("name1", tb1.getName());
 		assertEquals("name2", tb2.getName());
@@ -1606,6 +1608,7 @@ public abstract class AbstractPropertyAccessorTests {
 		assertEquals("name7", tb7.getName());
 		assertEquals("name4", tb4.getName());
 		assertEquals("name5", tb5.getName());
+		assertEquals("name8", tb8.getName());
 		assertEquals("name0", accessor.getPropertyValue("array[0].name"));
 		assertEquals("name1", accessor.getPropertyValue("array[1].name"));
 		assertEquals("name2", accessor.getPropertyValue("list[0].name"));
@@ -1618,6 +1621,9 @@ public abstract class AbstractPropertyAccessorTests {
 		assertEquals("name5", accessor.getPropertyValue("map[\"key.3\"].name"));
 		assertEquals("nameX", accessor.getPropertyValue("map[key4][0].name"));
 		assertEquals("nameY", accessor.getPropertyValue("map[key4][1].name"));
+		assertEquals("name8", accessor.getPropertyValue("map[key5[foo]].name"));
+		assertEquals("name8", accessor.getPropertyValue("map['key5[foo]'].name"));
+		assertEquals("name8", accessor.getPropertyValue("map[\"key5[foo]\"].name"));
 
 		MutablePropertyValues pvs = new MutablePropertyValues();
 		pvs.add("array[0].name", "name5");
@@ -1630,6 +1636,7 @@ public abstract class AbstractPropertyAccessorTests {
 		pvs.add("map['key.3'].name", "name0");
 		pvs.add("map[key4][0].name", "nameA");
 		pvs.add("map[key4][1].name", "nameB");
+		pvs.add("map[key5[foo]].name", "name10");
 		accessor.setPropertyValues(pvs);
 		assertEquals("name5", tb0.getName());
 		assertEquals("name4", tb1.getName());
@@ -1647,6 +1654,7 @@ public abstract class AbstractPropertyAccessorTests {
 		assertEquals("name0", accessor.getPropertyValue("map['key.3'].name"));
 		assertEquals("nameA", accessor.getPropertyValue("map[key4][0].name"));
 		assertEquals("nameB", accessor.getPropertyValue("map[key4][1].name"));
+		assertEquals("name10", accessor.getPropertyValue("map[key5[foo]].name"));
 	}
 
 	@Test

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -146,7 +146,9 @@ public class DelegatingFilterProxyTests {
 	}
 
 	@Test
-	public void testDelegatingFilterProxyWithTargetBeanNameAndNotYetRefreshedApplicationContext() throws ServletException, IOException {
+	public void testDelegatingFilterProxyWithTargetBeanNameAndNotYetRefreshedApplicationContext()
+			throws ServletException, IOException {
+
 		MockServletContext sc = new MockServletContext();
 
 		StaticWebApplicationContext wac = new StaticWebApplicationContext();
@@ -172,7 +174,9 @@ public class DelegatingFilterProxyTests {
 	}
 
 	@Test(expected = IllegalStateException.class)
-	public void testDelegatingFilterProxyWithTargetBeanNameAndNoApplicationContext() throws ServletException, IOException {
+	public void testDelegatingFilterProxyWithTargetBeanNameAndNoApplicationContext()
+			throws ServletException, IOException {
+
 		MockServletContext sc = new MockServletContext();
 
 		DelegatingFilterProxy filterProxy = new DelegatingFilterProxy("targetFilter", null);
@@ -325,7 +329,9 @@ public class DelegatingFilterProxyTests {
 	}
 
 	@Test
-	public void testDelegatingFilterProxyNotInjectedWacServletAttrPreferred() throws ServletException, IOException {
+	public void testDelegatingFilterProxyNotInjectedWacServletAttrPreferred()
+			throws ServletException, IOException {
+
 		ServletContext sc = new MockServletContext();
 		StaticWebApplicationContext wac = new StaticWebApplicationContext();
 		wac.setServletContext(sc);
@@ -401,7 +407,9 @@ public class DelegatingFilterProxyTests {
 		}
 
 		@Override
-		public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+		public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+				throws IOException, ServletException {
+
 			request.setAttribute("called", Boolean.TRUE);
 		}
 

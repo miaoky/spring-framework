@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2016 the original author or authors.
+ * Copyright 2002-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,6 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -41,10 +43,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.support.StaticWebApplicationContext;
+import org.springframework.web.method.HandlerTypePredicate;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for {@link RequestMappingHandlerMapping}.
@@ -136,6 +141,19 @@ public class RequestMappingHandlerMappingTests {
 	}
 
 	@Test
+	public void pathPrefix() throws NoSuchMethodException {
+		this.handlerMapping.setEmbeddedValueResolver(value -> "/${prefix}".equals(value) ? "/api" : value);
+		this.handlerMapping.setPathPrefixes(Collections.singletonMap(
+				"/${prefix}", HandlerTypePredicate.forAnnotation(RestController.class)));
+
+		Method method = UserController.class.getMethod("getUser");
+		RequestMappingInfo info = this.handlerMapping.getMappingForMethod(method, UserController.class);
+
+		assertNotNull(info);
+		assertEquals(Collections.singleton("/api/user/{id}"), info.getPatternsCondition().getPatterns());
+	}
+
+	@Test
 	public void resolveRequestMappingViaComposedAnnotation() throws Exception {
 		RequestMappingInfo info = assertComposedAnnotationMapping("postJson", "/postJson", RequestMethod.POST);
 
@@ -143,6 +161,14 @@ public class RequestMappingHandlerMappingTests {
 			info.getConsumesCondition().getConsumableMediaTypes().iterator().next().toString());
 		assertEquals(MediaType.APPLICATION_JSON_VALUE,
 			info.getProducesCondition().getProducibleMediaTypes().iterator().next().toString());
+	}
+
+	@Test // SPR-14988
+	public void getMappingOverridesConsumesFromTypeLevelAnnotation() throws Exception {
+		RequestMappingInfo requestMappingInfo = assertComposedAnnotationMapping(RequestMethod.GET);
+
+		assertArrayEquals(new MediaType[]{MediaType.ALL}, new ArrayList<>(
+				requestMappingInfo.getConsumesCondition().getConsumableMediaTypes()).toArray());
 	}
 
 	@Test
@@ -199,6 +225,7 @@ public class RequestMappingHandlerMappingTests {
 
 
 	@Controller
+	@RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
 	static class ComposedAnnotationController {
 
 		@RequestMapping
@@ -209,7 +236,7 @@ public class RequestMappingHandlerMappingTests {
 		public void postJson() {
 		}
 
-		@GetMapping("/get")
+		@GetMapping(path = "/get", consumes = MediaType.ALL_VALUE)
 		public void get() {
 		}
 
@@ -231,6 +258,7 @@ public class RequestMappingHandlerMappingTests {
 
 	}
 
+
 	@RequestMapping(method = RequestMethod.POST,
 			produces = MediaType.APPLICATION_JSON_VALUE,
 			consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -238,8 +266,19 @@ public class RequestMappingHandlerMappingTests {
 	@Retention(RetentionPolicy.RUNTIME)
 	@interface PostJson {
 
-		@AliasFor(annotation = RequestMapping.class, attribute = "path")
+		@AliasFor(annotation = RequestMapping.class)
 		String[] value() default {};
+	}
+
+
+	@RestController
+	@RequestMapping("/user")
+	static class UserController {
+
+		@GetMapping("/{id}")
+		public Principal getUser() {
+			return mock(Principal.class);
+		}
 	}
 
 }

@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -60,12 +60,13 @@ public class JRubyScriptTemplateTests {
 		Map<String, Object> model = new HashMap<>();
 		model.put("title", "Layout example");
 		model.put("body", "This is the body");
-		MockHttpServletResponse response = renderViewWithModel("org/springframework/web/servlet/view/script/jruby/template.erb", model);
+		String url = "org/springframework/web/servlet/view/script/jruby/template.erb";
+		MockHttpServletResponse response = render(url, model);
 		assertEquals("<html><head><title>Layout example</title></head><body><p>This is the body</p></body></html>",
 				response.getContentAsString());
 	}
 
-	private MockHttpServletResponse renderViewWithModel(String viewUrl, Map<String, Object> model) throws Exception {
+	private MockHttpServletResponse render(String viewUrl, Map<String, Object> model) throws Exception {
 		ScriptTemplateView view = createViewWithUrl(viewUrl);
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		MockHttpServletRequest request = new MockHttpServletRequest();

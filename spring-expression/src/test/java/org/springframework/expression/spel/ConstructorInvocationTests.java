@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -103,7 +103,7 @@ public class ConstructorInvocationTests extends AbstractExpressionTests {
 		eContext.setRootObject(new Tester());
 		eContext.setVariable("bar", 3);
 		Object o = expr.getValue(eContext);
-		assertEquals(o, 3);
+		assertEquals(3, o);
 		assertEquals(1, parser.parseExpression("counter").getValue(eContext));
 
 		// Now the expression has cached that throwException(int) is the right thing to

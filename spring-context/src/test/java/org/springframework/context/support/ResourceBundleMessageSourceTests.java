@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2014 the original author or authors.
+ * Copyright 2002-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -162,6 +162,7 @@ public class ResourceBundleMessageSourceTests {
 		assertEquals("Hello, message1", ac.getMessage("hello", args, Locale.ENGLISH));
 
 		// test default message without and with args
+		assertNull(ac.getMessage(null, null, null, Locale.ENGLISH));
 		assertEquals("default", ac.getMessage(null, null, "default", Locale.ENGLISH));
 		assertEquals("default", ac.getMessage(null, args, "default", Locale.ENGLISH));
 		assertEquals("{0}, default", ac.getMessage(null, null, "{0}, default", Locale.ENGLISH));
@@ -205,6 +206,39 @@ public class ResourceBundleMessageSourceTests {
 	@Test
 	public void testDefaultApplicationContextMessageSource() {
 		GenericApplicationContext ac = new GenericApplicationContext();
+		ac.refresh();
+		assertEquals("default", ac.getMessage("code1", null, "default", Locale.ENGLISH));
+		assertEquals("default value", ac.getMessage("code1", new Object[] {"value"}, "default {0}", Locale.ENGLISH));
+	}
+
+	@Test
+	public void testDefaultApplicationContextMessageSourceWithParent() {
+		GenericApplicationContext ac = new GenericApplicationContext();
+		GenericApplicationContext parent = new GenericApplicationContext();
+		parent.refresh();
+		ac.setParent(parent);
+		ac.refresh();
+		assertEquals("default", ac.getMessage("code1", null, "default", Locale.ENGLISH));
+		assertEquals("default value", ac.getMessage("code1", new Object[] {"value"}, "default {0}", Locale.ENGLISH));
+	}
+
+	@Test
+	public void testStaticApplicationContextMessageSourceWithStaticParent() {
+		StaticApplicationContext ac = new StaticApplicationContext();
+		StaticApplicationContext parent = new StaticApplicationContext();
+		parent.refresh();
+		ac.setParent(parent);
+		ac.refresh();
+		assertEquals("default", ac.getMessage("code1", null, "default", Locale.ENGLISH));
+		assertEquals("default value", ac.getMessage("code1", new Object[] {"value"}, "default {0}", Locale.ENGLISH));
+	}
+
+	@Test
+	public void testStaticApplicationContextMessageSourceWithDefaultParent() {
+		StaticApplicationContext ac = new StaticApplicationContext();
+		GenericApplicationContext parent = new GenericApplicationContext();
+		parent.refresh();
+		ac.setParent(parent);
 		ac.refresh();
 		assertEquals("default", ac.getMessage("code1", null, "default", Locale.ENGLISH));
 		assertEquals("default value", ac.getMessage("code1", new Object[] {"value"}, "default {0}", Locale.ENGLISH));

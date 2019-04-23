@@ -1,11 +1,11 @@
 /*
- * Copyright 2002-2015 the original author or authors.
+ * Copyright 2002-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -66,8 +66,12 @@ import org.springframework.messaging.Message;
  * HTTP handshake that initiates WebSocket sessions.</li>
  * </ul>
  *
- * <p>By default the return value is wrapped as a message and sent to the destination
- * specified with an {@link SendTo @SendTo} method-level annotation.
+ * <p>A return value will get wrapped as a message and sent to a default response
+ * destination or to a custom destination specified with an {@link SendTo @SendTo}
+ * method-level annotation. Such a response may also be provided asynchronously
+ * via a {@link org.springframework.util.concurrent.ListenableFuture} return type
+ * or a corresponding JDK 8 {@link java.util.concurrent.CompletableFuture} /
+ * {@link java.util.concurrent.CompletionStage} handle.
  *
  * <h3>STOMP over WebSocket</h3>
  * <p>An {@link SendTo @SendTo} annotation is not strictly required &mdash; by default

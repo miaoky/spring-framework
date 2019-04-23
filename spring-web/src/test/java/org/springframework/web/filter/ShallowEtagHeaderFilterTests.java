@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -45,6 +45,9 @@ public class ShallowEtagHeaderFilterTests {
 
 		assertTrue(filter.isEligibleForEtag(request, response, 200, StreamUtils.emptyInput()));
 		assertFalse(filter.isEligibleForEtag(request, response, 300, StreamUtils.emptyInput()));
+
+		request = new MockHttpServletRequest("HEAD", "/hotels");
+		assertFalse(filter.isEligibleForEtag(request, response, 200, StreamUtils.emptyInput()));
 
 		request = new MockHttpServletRequest("POST", "/hotels");
 		assertFalse(filter.isEligibleForEtag(request, response, 200, StreamUtils.emptyInput()));
@@ -227,7 +230,7 @@ public class ShallowEtagHeaderFilterTests {
 			assertEquals("Invalid request passed", request, filterRequest);
 			response.setContentLength(100);
 			FileCopyUtils.copy(responseBody, filterResponse.getOutputStream());
-			((HttpServletResponse) filterResponse).sendRedirect("http://www.google.com");
+			((HttpServletResponse) filterResponse).sendRedirect("https://www.google.com");
 		};
 		filter.doFilter(request, response, filterChain);
 
@@ -235,7 +238,7 @@ public class ShallowEtagHeaderFilterTests {
 		assertNull("Invalid ETag header", response.getHeader("ETag"));
 		assertEquals("Invalid Content-Length header", 100, response.getContentLength());
 		assertArrayEquals("Invalid content", responseBody, response.getContentAsByteArray());
-		assertEquals("Invalid redirect URL", "http://www.google.com", response.getRedirectedUrl());
+		assertEquals("Invalid redirect URL", "https://www.google.com", response.getRedirectedUrl());
 	}
 
 	// SPR-13717
